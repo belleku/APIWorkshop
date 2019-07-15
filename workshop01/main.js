@@ -76,6 +76,9 @@ app.get('/information', (req, resp) => {
     //Weather for city is in cityName variable
     //API key is in keys.weather
     const params = {
+        q: cityName,
+        units: 'metric',
+        appid: keys.weather
     }
 
     getWeather(params)
@@ -87,6 +90,9 @@ app.get('/information', (req, resp) => {
             //The 2 character country code is found in countryCode variable
             //API key is in keys.news
             const params = {
+               country: countryCode,
+               category: 'Technology',
+               apiKey: keys.news
             }
             return (Promise.all([ result, getNews(params) ]));
         })
