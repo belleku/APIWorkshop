@@ -80,7 +80,7 @@ app.get('/api/state/:state',(req, resp) =>
 
 
 // TODO GET /api/city/:cityId
-app.get('/api/state/:cityId',
+app.get('/api/city/:cityId',
     (req, resp) => {
   const stateAbbrev = req.params.cityId;
   //content type
