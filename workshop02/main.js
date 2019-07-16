@@ -13,12 +13,13 @@ console.info(`Using ${keys.mongo}`);
 
 const db = CitiesDB({  
 	connectionUrl: keys.mongo, 
-	databaseName: 'zips', 
-	collectionName: 'city'
+	databaseName: 'cities', 
+	collectionName: 'cities'
 });
 
 const app = express();
 
+app.set('etag',false);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -27,20 +28,86 @@ app.use(express.urlencoded({ extended: true }));
 // Mandatory workshop
 // TODO GET /api/states
 
-
+  app.get('/api/states',(req, resp) => 
+  {
+	//content type
+	resp.type('application/json')
+	
+	db.findAllStates()
+	  .then(result => {
+		//result code = 200
+		resp.status(200)
+		resp.set('X-Date', (new Date()).toUTCString())
+		resp.json(result);
+	   })
+	  .catch(error => {
+		 // error code to return 
+		resp.status(400)
+		resp.json({ error: error})
+	   });
+  });
 
 
 // TODO GET /api/state/:state
-
+app.get('/api/state/:state',(req, resp) => 
+{
+  const stateAbbrev = req.params.state;
+  //content type
+  resp.type('application/json')
+  db.findAllStates()
+   .then(result => {
+	 if (result.indexOf(stateAbbrev.toUpperCase()) < 0)
+	 {
+		 resp.status(400);
+		 resp.json({ error: `Not a valid state: ${stateAbbrev}`})
+		 return;
+	 }
+	 return (db.findCitiesByState(stateAbbrev));
+   })
+	  .then(result => {
+		//result code = 200
+		resp.status(200)
+		resp.json(result.map(v => `/api/city/${v}`));
+	   })
+	  .catch(error => {
+		 // error code to return 
+		resp.status(400)
+		resp.json({ error: error})
+	   });
+  
+});
 
 
 
 // TODO GET /api/city/:cityId
-
+app.get('/api/state/:cityId',
+    (req, resp) => {
+  const stateAbbrev = req.params.cityId;
+  //content type
+  resp.type('application/json')
+  
+  db.findCityById(stateAbbrev)
+	  .then(result => {
+		//result code = 200
+		resp.status(200)
+		resp.json(result);
+	   })
+	  .catch(error => {
+		 // error code to return 
+		resp.status(400)
+		resp.json({ error:  error})
+	   });
+  
+});
 
 
 // TODO POST /api/city
-
+app.post('/api/city',
+   (req,resp) =>{
+	   const newCity = req.body;
+   }
+ 
+);
 
 
 
