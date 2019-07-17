@@ -86,18 +86,25 @@ app.get('/api/city/:cityId',
   //content type
   resp.type('application/json')
   
-  db.findCityById(stateAbbrev)
-	  .then(result => {
-		//result code = 200
-		resp.status(200)
-		resp.json(result);
-	   })
-	  .catch(error => {
-		 // error code to return 
+	db.findCityById(stateAbbrev)
+	.then(result => {
+		//check whether can find the city ID in DB
+		if(result === undefined || result.length == 0 ) 
+		{
 		resp.status(400)
-		resp.json({ error:  error})
-	   });
-  
+		resp.json({ error: `Not a valid city ID: ${stateAbbrev}`})
+		return;
+		}
+	  //result code = 200
+	  resp.status(200)
+	  resp.json(result);
+	 })
+	.catch(error => {
+	   // error code to return 
+	  resp.status(400)
+	  resp.json({ error:  error})
+	 });
+
 });
 
 
