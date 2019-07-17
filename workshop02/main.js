@@ -91,13 +91,13 @@ app.get('/api/city/:cityId',
 		//check whether can find the city ID in DB
 		if(result === undefined || result.length == 0 ) 
 		{
-		resp.status(400)
-		resp.json({ error: `Not a valid city ID: ${stateAbbrev}`})
+		resp.status(404)
+		resp.json({ error: `City not found: ${stateAbbrev}`})
 		return;
 		}
 	  //result code = 200
 	  resp.status(200)
-	  resp.json(result);
+	  resp.json(result[0]);
 	 })
 	.catch(error => {
 	   // error code to return 
@@ -109,11 +109,36 @@ app.get('/api/city/:cityId',
 
 
 // TODO POST /api/city
+// Content-Type: application/json
+/*
+    {
+    "city" : "BARRE",
+    "loc" : [ 
+        -72.108354, 
+        42.409698
+    ],
+    "pop" : 4546,
+    "state" : "MA"
+}
+*/
 app.post('/api/city',
    (req,resp) =>{
 	   const newCity = req.body;
-   }
- 
+    //content type 
+	resp.type('application/json')
+	db.insertCity(newCity)
+	.then(
+		 result => {
+			resp.status(201)
+			resp.json(result);
+		 }
+	)
+	.catch(error => {
+		// error code to return 
+	   resp.status(400)
+	   resp.json({ error:  error})
+	  });
+   } 
 );
 
 
