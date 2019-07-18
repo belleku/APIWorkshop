@@ -44,7 +44,7 @@ paths:
               content:
                  application/json:
                       schema:
-                         $ref: "#/components/schemas/error" 
+                         $ref: "#/components/schemas/error"
       
     /api/city/{cityId}:
       get:
@@ -88,6 +88,37 @@ paths:
                       content: 
                          application/json:
                               schema:
-                                 $ref: "#/components/schemas/error"      
+                                 $ref: "#/components/schemas/error"
+  
+    /api/city:
+       post:
+          description: Create a city in DB
+          operationId: postCity
+          requestBody:
+              required: true
+              content:
+                 application/json:
+                      schema:
+                        type: object
+                        properties:
+                          city:
+                            $ref: "city-schema.json#/properties"
+          responses:
+             201:
+                 description: Created
+                 content: 
+                     application/json:
+                          schema:
+                             type: object
+                             properties:
+                               city:
+                                $ref: "city-schema.json#/city"
+             400:
+                description: Error
+                content:
+                   application/json:
+                        schema:
+                           $ref: "#/components/schemas/error" 
+   
     
     
