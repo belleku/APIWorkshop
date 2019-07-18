@@ -98,11 +98,8 @@ paths:
               required: true
               content:
                  application/json:
-                      schema:
-                        type: object
-                        properties:
-                          city:
-                            $ref: "city-schema.json#/properties"
+                  schema:
+                    type: object
           responses:
              201:
                  description: Created
