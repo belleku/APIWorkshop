@@ -1,0 +1,121 @@
+openapi: "3.0.2"
+
+info:
+    title: "Cities API"
+    description: "My API for US postal code"
+    version: "v1.0"
+
+servers:
+- url: http://localhost:3000
+  description: My development server
+
+components:
+    schemas:
+      error:
+        type: object
+        properties: 
+          error:
+            type: string
+        required:
+        - error
+
+paths:
+    /api/state/{stateId}:
+      get:
+        description: Return a list of cities from the state
+        operationId: getCitiesFromState
+        parameters:
+          - name: stateId
+            in: path
+            required: true
+            schema:
+              $ref: "city-schema.json#/definitions/state"
+        responses:
+          200:
+              description: Success
+              content:
+                 application/json:
+                      schema:
+                        type: array
+                        items: 
+                          type: string
+          400:
+              description: Error
+              content:
+                 application/json:
+                      schema:
+                         $ref: "#/components/schemas/error"
+      
+    /api/city/{cityId}:
+      get:
+        description: Return the city details
+        operationId: getCity
+        parameters:
+          - name: cityId
+            in: path
+            required: true
+            schema:
+              type: string
+        responses:
+          200:
+              description: Success
+              content: 
+                   application/json:
+                       schema:
+                        type: array
+                        items:
+                          type: string
+          400:
+              description: Error
+              content:
+                 application/json:
+                      schema:
+                         $ref: "#/components/schemas/error" 
+
+    /api/states:
+         get:
+             description: Return a list of valid 2 charater states
+             operationId: getStates
+             responses: 
+                  200:
+                      description: Success
+                      content: 
+                         application/json:
+                              schema:
+                                $ref: "city-schema.json#/definitions/state"
+                  400:
+                      description: Error
+                      content: 
+                         application/json:
+                              schema:
+                                 $ref: "#/components/schemas/error"
+  
+    /api/city:
+       post:
+          description: Create a city in DB
+          operationId: postCity
+          requestBody:
+              required: true
+              content:
+                 application/json:
+                  schema:
+                    type: object
+          responses:
+             201:
+                 description: Created
+                 content: 
+                     application/json:
+                          schema:
+                             type: object
+                             properties:
+                               city:
+                                $ref: "city-schema.json#/city"
+             400:
+                description: Error
+                content:
+                   application/json:
+                        schema:
+                           $ref: "#/components/schemas/error" 
+   
+    
+    

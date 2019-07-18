@@ -20,7 +20,8 @@ const express = require('express')
 const CitiesDB = require('./citiesdb');
 
 const serviceId = uuid().substring(0, 8);
-const serviceName = `zips-${serviceId}`
+//const serviceName = `zips-${serviceId}`
+const serviceName = 'zips';
 
 //Load application keys
 //Rename _keys.json file to keys.json
@@ -48,9 +49,11 @@ app.use(express.urlencoded({ extended: true }));
 // Start of workshop
 
 // TODO 1/3 Load schemans
+//load the schema from directory
+const citySchema = require('./schema/city-schema.json');
 
-
-
+//new OpenAPIValidator({ apiSpecPath: join(__dirname, 'schema','city-api.yaml')
+//}).install(app)
 
 // TODO 2/3 Copy your routes from workshop03 here
 // Start of workshop
@@ -58,8 +61,13 @@ app.use(express.urlencoded({ extended: true }));
 // Mandatory workshop
 // TODO GET /api/states
 
-app.get('/api/states',(req, resp) => 
-{
+app.get('/api/states',
+//cache for 30 sec
+    cacheControl({ maxAge: 30, private: false}),
+    (req, resp) => {
+
+  console.info('***GET LIST OF STATES***', new Date())
+
   //content type
   resp.type('application/json')
   
@@ -152,7 +160,7 @@ resp.type('application/json')
 }
 */
 app.post('/api/city',
-//schemaValidator.validate({ body: citySchema }),
+schemaValidator.validate({ body: citySchema }),
  (req,resp) =>{
 	 const newCity = req.body;
   //content type 
@@ -201,7 +209,22 @@ db.getDB()
 			console.info(`\tService id: ${serviceId}`);
 
 			// TODO 3/3 Add service registration here
+            consul.agent.service.register({
+			   id: serviceId,
+			   name: serviceName,
+			   port: PORT,
+			   //get consul to call client to check service alive
+			   check: {
+				  http: `http://localhost:${PORT}/health`,
+				  interval: '5s',
+				  deregistercriticalserviceafter: '10s'
+			   }
 
+			   
+
+			   
+
+			})
 
 
 
