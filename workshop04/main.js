@@ -215,19 +215,25 @@ db.getDB()
 			   port: PORT,
 			   //get consul to call client to check service alive
 			   check: {
-				  http: `http://localhost:${PORT}/health`,
-				  interval: '5s',
+				  //http: `http://localhost:${PORT}/health`,
+				  //interval: '5s',
+				  //client send to consul every 5 sec
+				  'ttl': '5s',
 				  deregistercriticalserviceafter: '10s'
 			   }
-
-			   
-
-			   
-
 			})
-
-
-
+ 
+			//heartbeat
+			setInterval(
+               () => {
+				   console.info(serviceId,': heartbeat:',new Date());
+				   consul.agent.check.pass({
+					   id: `service:${serviceId}`
+					   }
+				   )
+			   },
+			   5000 //time 5 sec
+			)
 		});
 	})
 	.catch(error => {
